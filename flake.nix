@@ -61,12 +61,12 @@
               stdenv.cc
             ];
 
-            buildInputs = lib.optionals pkgs.stdenv.isLinux tauriLinuxLibs;
+            buildInputs = lib.optionals pkgs.stdenv.hostPlatform.isLinux tauriLinuxLibs;
 
             shellHook = ''
               export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
               export NIX_SSL_CERT_FILE="$SSL_CERT_FILE"
-              ${lib.optionalString pkgs.stdenv.isLinux ''
+              ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
                 export XDG_DATA_DIRS="${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:''${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
               ''}
               # 部分显卡/驱动下 WebKitGTK 可能白屏，可尝试取消注释：

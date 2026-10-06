@@ -3,6 +3,10 @@ node_modules
 
 # Jujutsu
 /.jj/
+
+# Nix
+/result
+.direnv/
 /build
 /.svelte-kit
 /package
