@@ -247,7 +247,7 @@ jj bookmark set main           # 推进 main 书签
 jj git push --bookmark main    # 推送
 ```
 
-环境依赖：推荐 `nix develop`（flake 已提交，含 Node 24 / pnpm / Rust / jj / WebKitGTK）；不使用 Nix 时用 rustup + Fedora 系统库（见 README）。
+环境依赖：推荐 `nix develop`（flake 已提交，含 Node 24 / pnpm / Rust / jj / WebKitGTK）；不使用 Nix 时按各自平台安装 rustup 与系统依赖（见 README / Tauri 官方文档）。
 
 ---
 

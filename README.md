@@ -18,15 +18,11 @@ nix develop
 `flake.lock` 已提交，环境可复现；`nix flake update` 升级。
 
 <details>
-<summary>不使用 Nix 时手动安装（Fedora）</summary>
+<summary>不使用 Nix 时的准备（按操作系统）</summary>
 
-- Node.js ≥ 24 + pnpm（`corepack enable`）
+- Node.js ≥ 24 + pnpm
 - Rust stable（[rustup](https://rustup.rs)）
-
-```bash
-sudo dnf install webkit2gtk4.1-devel openssl-devel libappindicator-gtk3-devel librsvg2-devel libxdo-devel
-sudo dnf group install "c-development"
-```
+- 系统构建依赖（Linux 的 WebKitGTK 等，Windows / macOS 各有要求）：见 [Tauri Prerequisites](https://tauri.app/start/prerequisites/)
 
 </details>
 
