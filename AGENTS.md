@@ -127,6 +127,7 @@
 | 前端 | Svelte 5（SvelteKit SPA） + TypeScript + Vite |
 | 包管理 | pnpm |
 | 版本控制 | Jujutsu (jj) + colocated Git 后端（GitHub 托管与 CI 不受影响） |
+| 开发环境 | Nix flake（`nix develop`：Node 24 / pnpm / rust-bin / jj / WebKitGTK） |
 | 测试 | Vitest（core 纯逻辑）；UI 用手动走查清单 |
 | 分发 | GitHub Actions 矩阵构建 Linux / Windows / macOS；打 tag 触发 Release |
 | 许可证 | **GPL-3.0**；依赖必须 GPL 兼容 |
@@ -246,7 +247,7 @@ jj bookmark set main           # 推进 main 书签
 jj git push --bookmark main    # 推送
 ```
 
-环境依赖：Rust（rustup）；Fedora 需 `webkit2gtk4.1-devel` 等系统库（写入 README）。
+环境依赖：推荐 `nix develop`（flake 已提交，含 Node 24 / pnpm / Rust / jj / WebKitGTK）；不使用 Nix 时用 rustup + Fedora 系统库（见 README）。
 
 ---
 
@@ -254,7 +255,7 @@ jj git push --bookmark main    # 推送
 
 | 项 | 现状 | 决策时机 |
 |---|---|---|
-| 初始词库来源 | 旧资产已删除；v0.1 抽卡的词从哪来未定 | **v0.1 提案前必须解决** |
+| 初始词库来源 | 已定：全新手写 12 词种子（含领域/难度等元信息），随 v0.1.0 落地 | 已解决 |
 | 词库更新机制 | 倾向：抓取 GitHub Trending / awesome 列表 → 生成候选 → 人工审核入库；数据结构先按可插拔词源设计 | v0.1 之后单独提案 |
 | 媒体细节 | 支持导入复制 + 外部引用两种；播放与格式细节未定 | v0.3 开始时 |
 | 智能建议 | 形式（本地模型 / API）、成本、隐私未定 | 评分卡稳定后 |
@@ -265,5 +266,5 @@ jj git push --bookmark main    # 推送
 
 ## 11. 当前状态
 
-- 仓库尚无应用代码；旧原型资产已删除，**项目从零开始**。
-- 下一步：搭建脚手架（含 git init、GPL-3.0 LICENSE、CI）→ 解决初始词库来源（§10）→ 提交 v0.1.0 迭代提案。
+- 脚手架已落地：Tauri 2 + SvelteKit（SPA）+ TypeScript + jj（colocated）+ GPL-3.0 + 三平台 CI；初始提交位于 `main` 书签，工作区已开始新的 change。
+- 下一步：确认 v0.1.0 迭代提案（抽卡：随机展示 + 重抽）→ 实现 → 手动验收。

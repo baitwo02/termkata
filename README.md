@@ -7,18 +7,32 @@
 - 当前状态：v0.1.0 开发前，仅有项目脚手架。
 - 项目约定（目标、路线图、开发范式、Agent 契约）：见 [`AGENTS.md`](./AGENTS.md)。
 
-## 环境要求
+## 开发环境
+
+推荐使用 Nix flake（一次获得 Node 24 / pnpm / Rust / jj / WebKitGTK 等全部依赖）：
+
+```bash
+nix develop
+```
+
+`flake.lock` 已提交，环境可复现；`nix flake update` 升级。
+
+<details>
+<summary>不使用 Nix 时手动安装（Fedora）</summary>
 
 - Node.js ≥ 24 + pnpm（`corepack enable`）
 - Rust stable（[rustup](https://rustup.rs)）
-- Linux（Fedora）：
 
 ```bash
 sudo dnf install webkit2gtk4.1-devel openssl-devel libappindicator-gtk3-devel librsvg2-devel libxdo-devel
 sudo dnf group install "c-development"
 ```
 
+</details>
+
 ## 常用命令
+
+在 `nix develop` 内执行：
 
 ```bash
 pnpm install
