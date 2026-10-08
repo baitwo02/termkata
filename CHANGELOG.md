@@ -4,6 +4,10 @@
 
 ## [未发布]
 
+### 变更
+
+- 词汇来源改为 LLM API 按需生成（BYOK），固定词库方案废弃（ADR 0003）
+
 ### 新增
 
 - 项目脚手架：Tauri 2 + SvelteKit（SPA 模式）+ TypeScript + Vite
