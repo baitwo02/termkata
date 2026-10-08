@@ -9,22 +9,13 @@
 
 ## 开发环境
 
-推荐使用 Nix flake（一次获得 Node 24 / pnpm / Rust / jj / WebKitGTK 等全部依赖）：
+开发环境由仓库内的 Nix flake 管理（Node 24 / pnpm / Rust / jj / WebKitGTK 等全部依赖）：
 
 ```bash
-nix develop
+nix develop        # 进入开发环境
 ```
 
-`flake.lock` 已提交，环境可复现；`nix flake update` 升级。
-
-<details>
-<summary>不使用 Nix 时的准备（按操作系统）</summary>
-
-- Node.js ≥ 24 + pnpm
-- Rust stable（[rustup](https://rustup.rs)）
-- 系统构建依赖（Linux 的 WebKitGTK 等，Windows / macOS 各有要求）：见 [Tauri Prerequisites](https://tauri.app/start/prerequisites/)
-
-</details>
+前置：已安装 [Nix](https://nixos.org/download/)（flakes 已启用）。`flake.lock` 已提交，环境可复现；`nix flake update` 升级。
 
 ## 常用命令
 
