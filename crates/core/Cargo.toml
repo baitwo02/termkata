@@ -1,0 +1,6 @@
+[package]
+name = "termkata-core"
+version = "0.1.0"
+edition = "2021"
+description = "termkata 核心：状态机与纯逻辑（无 UI / 平台依赖）"
+license = "GPL-3.0-only"

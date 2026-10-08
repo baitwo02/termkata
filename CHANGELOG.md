@@ -4,14 +4,16 @@
 
 ## [未发布]
 
+### 新增
+
+- 一轮练习状态机核心（`crates/core`，Rust）：4 个阶段 / 事件 / `transition` 纯转移函数；7 个功能用例（cargo test）
+- 开发环境：Nix flake（Rust / jj）
+- 版本控制：Jujutsu（colocated Git 后端）
+- 许可证：GPL-3.0-only
+- CI：三平台 `cargo test` / `cargo check`
+
 ### 变更
 
 - 词汇来源改为 LLM API 按需生成（BYOK），固定词库方案废弃（ADR 0003）
-
-### 新增
-
-- 项目脚手架：Tauri 2 + SvelteKit（SPA 模式）+ TypeScript + Vite
-- 开发环境：Nix flake（Node 24 / pnpm / Rust / jj / WebKitGTK），替代手动安装系统依赖
-- 版本控制：Jujutsu（colocated Git 后端）
-- 许可证：GPL-3.0-only
-- CI/CD：GitHub Actions 三平台检查；tag 触发安装包构建
+- 核心实现语言改为 Rust（ADR 0004）
+- 仓库当前只保留 core 与文档；Tauri / Svelte 壳将在 UI 迭代时引入

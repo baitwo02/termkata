@@ -1,5 +1,4 @@
 .DS_Store
-node_modules
 
 # Jujutsu
 /.jj/
@@ -7,11 +6,6 @@ node_modules
 # Nix
 /result
 .direnv/
-/build
-/.svelte-kit
-/package
-.env
-.env.*
-!.env.example
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+
+# Cargo
+/target/

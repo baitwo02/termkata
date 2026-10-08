@@ -4,29 +4,24 @@
 
 本地优先、跨平台的个人训练工具。练习循环：**抽词 → 限时准备 → 脱稿口播 → 回看录像 → 按结构评分卡自评 → 沉淀记录**。
 
-- 当前状态：v0.1.0 开发前，仅有项目脚手架。
+- 当前状态：仓库只包含 Rust 核心（`crates/core`）；UI 尚未开始，Tauri / Svelte 壳将在 UI 迭代时引入。
 - 项目约定（目标、路线图、开发范式、Agent 契约）：见 [`AGENTS.md`](./AGENTS.md)。
 
 ## 开发环境
 
-开发环境由仓库内的 Nix flake 管理（Node 24 / pnpm / Rust / jj / WebKitGTK 等全部依赖）：
+由仓库内的 Nix flake 管理（Rust / jj）：
 
 ```bash
-nix develop        # 进入开发环境
+nix develop
 ```
 
-前置：已安装 [Nix](https://nixos.org/download/)（flakes 已启用）。`flake.lock` 已提交，环境可复现；`nix flake update` 升级。
+前置：已安装 [Nix](https://nixos.org/download/)（flakes 已启用）。`flake.lock` 已提交，环境可复现。
 
 ## 常用命令
 
-在 `nix develop` 内执行：
-
 ```bash
-pnpm install
-pnpm tauri dev      # 开发运行（首次编译 Rust，较慢）
-pnpm lint           # svelte-check 类型检查
-pnpm build          # 前端构建
-pnpm tauri build    # 打包安装包
+cargo test -p termkata-core   # 核心单测
+cargo check --workspace       # 编译检查
 ```
 
 版本控制使用 [Jujutsu](https://www.jj-vcs.dev/)（colocated，Git 后端）；常用命令见 `AGENTS.md` §9。
