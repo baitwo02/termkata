@@ -87,7 +87,7 @@
 └── media/          # 导入的音视频文件（引用式媒体只存外部路径）
 ```
 
-**词汇来源**：由 LLM API 按需生成（BYOK，客户端直连，无后端）。生成子系统与状态机分离：状态机只接收“词汇已就绪”这一事实，不感知网络与模型。
+**词汇来源**：由 LLM API 按需生成（BYOK，客户端直连，无后端）。生成子系统与状态机分离（`crates/wordgen` 的 `WordSource` 端口）：状态机只接收“词汇已就绪”这一事实，不感知网络与模型。
 
 **用户兴趣领域**：用户手动维护的领域清单（增删），作为词汇生成的上下文输入；结构待定（§10）。
 
@@ -133,7 +133,8 @@ termkata/
 ├── LICENSE
 ├── Cargo.toml              # Cargo workspace（members: crates/core）
 ├── crates/
-│   └── core/               # Rust 核心：状态机与纯逻辑（无 UI / 平台依赖，零外部依赖）
+│   ├── core/               # Rust 核心：状态机与纯逻辑（无 UI / 平台依赖，零外部依赖）
+│   └── wordgen/            # 词汇生成适配器：WordSource 端口 + FakeApi（真实 API 后续）
 └── docs/
     ├── adr/                # 架构决策记录
     └── backlog.md          # 各迭代暂不处理的想法/问题
@@ -187,7 +188,7 @@ termkata/
 
 ### 测试策略
 
-- 单测覆盖（`cargo test`，`crates/core`）：一轮练习状态机（转移表 / 非法事件 / 状态不可变）、计时状态机、评分计算；词汇生成器用假实现注入。
+- 单测覆盖（`cargo test --workspace`）：一轮练习状态机（转移表 / 非法事件 / 状态不可变）、词汇生成端口（FakeApi）、计时状态机、评分计算；真实 API 接入时用假实现注入测试。
 - 不写 UI 端到端自动化（成本 > 收益）；UI 用固定验收清单。
 - 接入真实 API 前，必须先用单测锁定响应解析与失败路径。
 
@@ -253,7 +254,7 @@ jj git push --bookmark main    # 推送
 
 ## 11. 当前状态
 
-- 仓库当前只含 Rust 核心（`crates/core`）与文档；Tauri / Svelte 壳在 UI 迭代时引入。
+- 仓库当前只含 Rust 核心（`crates/core`）、词汇生成端口（`crates/wordgen`）与文档；Tauri / Svelte 壳在 UI 迭代时引入。
 - 核心状态机（ADR 0004）已验收：4 阶段 / 5 事件 / `transition` 纯函数，`cargo test` 7/7。
 - 词汇来源已改为 LLM API 生成 + 用户兴趣领域（ADR 0003），固定词库方案废弃。
 - 下一步：UI 迭代提案（IPC 桥 + LLM 生成 + 状态渲染）。

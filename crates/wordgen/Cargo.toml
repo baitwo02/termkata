@@ -1,0 +1,6 @@
+[package]
+name = "termkata-wordgen"
+version = "0.1.0"
+edition = "2021"
+description = "termkata 词汇生成：WordSource 端口与假实现（真实 LLM API 后续接入）"
+license = "GPL-3.0-only"

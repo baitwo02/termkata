@@ -5,3 +5,7 @@ version = 4
 [[package]]
 name = "termkata-core"
 version = "0.1.0"
+
+[[package]]
+name = "termkata-wordgen"
+version = "0.1.0"

@@ -4,7 +4,7 @@
 
 本地优先、跨平台的个人训练工具。练习循环：**抽词 → 限时准备 → 脱稿口播 → 回看录像 → 按结构评分卡自评 → 沉淀记录**。
 
-- 当前状态：仓库只包含 Rust 核心（`crates/core`）；UI 尚未开始，Tauri / Svelte 壳将在 UI 迭代时引入。
+- 当前状态：仓库包含 Rust 核心（`crates/core`）与词汇生成端口（`crates/wordgen`）；UI 尚未开始，Tauri / Svelte 壳将在 UI 迭代时引入。
 - 项目约定（目标、路线图、开发范式、Agent 契约）：见 [`AGENTS.md`](./AGENTS.md)。
 
 ## 开发环境
@@ -20,7 +20,7 @@ nix develop
 ## 常用命令
 
 ```bash
-cargo test -p termkata-core   # 核心单测
+cargo test --workspace       # 全部单测
 cargo check --workspace       # 编译检查
 ```
 
