@@ -15,14 +15,14 @@ pub fn state_text(state: &RoundState) -> String {
             None => "[就绪] 等待抽取".to_string(),
         },
         Phase::Generating => "[生成中] 正在请求词汇…".to_string(),
-        Phase::Preparing => format!("[准备] 当前词汇：{}", state.word_label()),
-        Phase::Speaking => format!("[口播] 当前词汇：{}", state.word_label()),
+        Phase::Preparing => format!("[准备] 当前词汇：{}", state.word_text()),
+        Phase::Speaking => format!("[口播] 当前词汇：{}", state.word_text()),
     }
 }
 
 /// 被拒绝的操作提示。
 pub fn rejected_text(phase: Phase) -> String {
-    format!("当前阶段不能执行该操作（{}）", phase_label(phase))
+    format!("当前阶段不能执行该操作（{}）", phase_text(phase))
 }
 
 /// 帮助文本。
@@ -33,16 +33,16 @@ pub fn help_text() -> &'static str {
 /// 显示层扩展：核心值 → 界面文案。
 trait RoundDisplay {
     /// 当前词汇的显示文本（无词时给出占位符）。
-    fn word_label(&self) -> &str;
+    fn word_text(&self) -> &str;
 }
 
 impl RoundDisplay for RoundState {
-    fn word_label(&self) -> &str {
+    fn word_text(&self) -> &str {
         self.word().unwrap_or("(无)")
     }
 }
 
-fn phase_label(phase: Phase) -> &'static str {
+fn phase_text(phase: Phase) -> &'static str {
     match phase {
         Phase::Ready => "就绪",
         Phase::Generating => "生成中",
