@@ -5,9 +5,9 @@
 use termkata_core::round::{transition, Phase, RoundEvent, RoundState};
 use termkata_wordgen::WordSource;
 
-/// 一次事件派发的结果：转移是否生效。
+/// 一次事件派发后的转移状态。
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TransitionResult {
+pub enum TransitionStatus {
     /// 转移已生效（状态已更新）
     Applied,
     /// 事件被忽略（当前阶段不允许该操作）
@@ -33,8 +33,8 @@ impl<S: WordSource> App<S> {
         &self.state
     }
 
-    /// 发起抽取：就绪 → 生成中。返回转移结果。
-    pub fn begin_draw(&mut self) -> TransitionResult {
+    /// 发起抽取：就绪 → 生成中。返回转移状态。
+    pub fn begin_draw(&mut self) -> TransitionStatus {
         self.dispatch(RoundEvent::RequestWord)
     }
 
@@ -48,23 +48,23 @@ impl<S: WordSource> App<S> {
     }
 
     /// 开始口播：准备 → 口播。
-    pub fn start_speaking(&mut self) -> TransitionResult {
+    pub fn start_speaking(&mut self) -> TransitionStatus {
         self.dispatch(RoundEvent::StartSpeaking)
     }
 
     /// 结束口播：口播 → 就绪。
-    pub fn end_speaking(&mut self) -> TransitionResult {
+    pub fn end_speaking(&mut self) -> TransitionStatus {
         self.dispatch(RoundEvent::EndSpeaking)
     }
 
     /// 把事件派发给状态机；状态未变化即视为被拒绝。
-    fn dispatch(&mut self, event: RoundEvent) -> TransitionResult {
+    fn dispatch(&mut self, event: RoundEvent) -> TransitionStatus {
         let before = self.state.phase();
         self.state = transition(self.state.clone(), event);
         if self.state.phase() == before {
-            TransitionResult::Rejected(before)
+            TransitionStatus::Rejected(before)
         } else {
-            TransitionResult::Applied
+            TransitionStatus::Applied
         }
     }
 }
@@ -83,7 +83,7 @@ mod tests {
     #[test]
     fn draw_from_ready_lands_on_first_word() {
         let mut app = app();
-        assert_eq!(app.begin_draw(), TransitionResult::Applied);
+        assert_eq!(app.begin_draw(), TransitionStatus::Applied);
         block_on(app.finish_draw());
         assert_eq!(app.state().phase(), Phase::Preparing);
         assert_eq!(app.state().word(), Some("SSA（静态单赋值）"));
@@ -92,20 +92,20 @@ mod tests {
     #[test]
     fn speaking_before_preparing_is_rejected() {
         let mut app = app();
-        assert_eq!(app.start_speaking(), TransitionResult::Rejected(Phase::Ready));
+        assert_eq!(app.start_speaking(), TransitionStatus::Rejected(Phase::Ready));
     }
 
     #[test]
     fn full_round_then_second_draw_rotates_words() {
         let mut app = app();
 
-        assert_eq!(app.begin_draw(), TransitionResult::Applied);
+        assert_eq!(app.begin_draw(), TransitionStatus::Applied);
         block_on(app.finish_draw());
-        assert_eq!(app.start_speaking(), TransitionResult::Applied);
-        assert_eq!(app.end_speaking(), TransitionResult::Applied);
+        assert_eq!(app.start_speaking(), TransitionStatus::Applied);
+        assert_eq!(app.end_speaking(), TransitionStatus::Applied);
         assert_eq!(app.state().phase(), Phase::Ready);
 
-        assert_eq!(app.begin_draw(), TransitionResult::Applied);
+        assert_eq!(app.begin_draw(), TransitionStatus::Applied);
         block_on(app.finish_draw());
         assert_eq!(app.state().word(), Some("逃逸分析"));
     }

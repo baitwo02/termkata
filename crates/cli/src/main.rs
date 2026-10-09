@@ -8,7 +8,7 @@ mod render;
 
 use std::io::{self, BufRead, Write};
 
-use termkata_host::app::{App, TransitionResult};
+use termkata_host::app::{App, TransitionStatus};
 use termkata_host::exec;
 use termkata_wordgen::fake::FakeApi;
 use termkata_wordgen::WordSource;
@@ -40,8 +40,8 @@ fn main() {
             Input::Command(Command::Quit) => break,
             Input::Command(Command::Draw) => {
                 match app.begin_draw() {
-                    TransitionResult::Rejected(phase) => println!("{}", render::rejected_text(phase)),
-                    TransitionResult::Applied => {
+                    TransitionStatus::Rejected(phase) => println!("{}", render::rejected_text(phase)),
+                    TransitionStatus::Applied => {
                         println!("{}", render::GENERATING_HINT);
                         exec::block_on(app.finish_draw());
                     }
@@ -57,8 +57,8 @@ fn main() {
 }
 
 /// 打印普通命令的结果：被拒绝时先提示，随后总是打印当前状态。
-fn report<S: WordSource>(result: TransitionResult, app: &App<S>) {
-    if let TransitionResult::Rejected(phase) = result {
+fn report<S: WordSource>(status: TransitionStatus, app: &App<S>) {
+    if let TransitionStatus::Rejected(phase) = status {
         println!("{}", render::rejected_text(phase));
     }
     println!("{}", render::state_text(app.state()));

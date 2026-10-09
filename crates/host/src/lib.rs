@@ -6,4 +6,4 @@
 pub mod app;
 pub mod exec;
 
-pub use app::{App, TransitionResult};
+pub use app::{App, TransitionStatus};
