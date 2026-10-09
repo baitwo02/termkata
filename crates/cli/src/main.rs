@@ -41,11 +41,11 @@ fn main() {
                 print_state(&state);
             }
             "speak" => {
-                state = apply(state, RoundEvent::StartSpeaking);
+                state = dispatch(state, RoundEvent::StartSpeaking);
                 print_state(&state);
             }
             "end" => {
-                state = apply(state, RoundEvent::EndSpeaking);
+                state = dispatch(state, RoundEvent::EndSpeaking);
                 print_state(&state);
             }
             other => println!("未知命令：{other}（输入 help 查看可用命令）"),
@@ -57,7 +57,7 @@ fn main() {
 
 /// 抽取：发 `RequestWord` → 等生成器 → 按结果发 `WordReceived` / `RequestFailed`。
 fn draw(state: RoundState, source: &mut impl WordSource) -> RoundState {
-    let state = apply(state, RoundEvent::RequestWord);
+    let state = dispatch(state, RoundEvent::RequestWord);
     if state.phase != Phase::Generating {
         return state; // 当前阶段不允许抽取
     }
@@ -69,8 +69,8 @@ fn draw(state: RoundState, source: &mut impl WordSource) -> RoundState {
     }
 }
 
-/// 发事件；若阶段未变化则提示操作无效。
-fn apply(state: RoundState, event: RoundEvent) -> RoundState {
+/// 把事件派发给状态机；无效事件被忽略并提示（返回原状态）。
+fn dispatch(state: RoundState, event: RoundEvent) -> RoundState {
     let before = state.phase;
     let next = transition(state, event);
     if next.phase == before {
