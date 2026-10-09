@@ -9,33 +9,52 @@ import type { RoundState } from '$lib/types/round';
 
 let current = $state<RoundState>({ phase: 'ready', word: null, error: null });
 
+/** 宿主调用失败时的提示（IPC 层错误，与"词生成失败"是两回事）。 */
+let hostError = $state<string | null>(null);
+
 /** 临时延迟：FakeApi 没有网络耗时，便于观察加载态；真实 API 接入后删除。 */
 const FAKE_LATENCY_MS = 400;
+
+/** 调用宿主命令并把返回值同步到本地镜像；失败时记录并显示，而不是静默。 */
+async function callHost(action: () => Promise<RoundState>): Promise<void> {
+  try {
+    current = await action();
+    hostError = null;
+  } catch (error) {
+    hostError = error instanceof Error ? error.message : String(error);
+    console.error('宿主调用失败：', error);
+  }
+}
 
 export const round = {
   get state(): RoundState {
     return current;
   },
 
+  get hostError(): string | null {
+    return hostError;
+  },
+
   /** 启动时从宿主同步一次状态。 */
   async refresh(): Promise<void> {
-    current = await api.getState();
+    await callHost(api.getState);
   },
 
   /** 抽取：先进入生成中（渲染加载态），再等待生成结果。 */
   async draw(): Promise<void> {
-    current = await api.beginDraw();
+    await callHost(api.beginDraw);
+    if (hostError) return;
     await new Promise((resolve) => setTimeout(resolve, FAKE_LATENCY_MS));
-    current = await api.finishDraw();
+    await callHost(api.finishDraw);
   },
 
   /** 准备结束，开始口播。 */
   async speak(): Promise<void> {
-    current = await api.startSpeaking();
+    await callHost(api.startSpeaking);
   },
 
   /** 结束口播，回到就绪。 */
   async end(): Promise<void> {
-    current = await api.endSpeaking();
+    await callHost(api.endSpeaking);
   },
 };

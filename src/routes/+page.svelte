@@ -11,6 +11,10 @@
 <main>
   <h1>抽讲</h1>
 
+  {#if round.hostError}
+    <p class="error">宿主调用失败：{round.hostError}</p>
+  {/if}
+
   {#if round.state.phase === 'ready'}
     <p class="hint">抽一个术语，限时准备，脱稿讲清楚。</p>
     <button onclick={() => round.draw()}>抽取</button>
