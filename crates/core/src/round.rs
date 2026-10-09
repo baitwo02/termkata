@@ -25,6 +25,8 @@
 
 /// 一轮练习所处的阶段。
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub enum Phase {
     #[default]
     Ready,
@@ -38,6 +40,7 @@ pub enum Phase {
 /// 字段私有：外部只能通过 `transition` 产生新状态、通过访问器读取，
 /// 无法自行拼装出非法状态（如 `Preparing` 却没有词）。
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct RoundState {
     phase: Phase,
     word: Option<String>,
@@ -116,7 +119,6 @@ mod tests {
     fn apply_all(events: impl IntoIterator<Item = RoundEvent>) -> RoundState {
         events.into_iter().fold(RoundState::new(), transition)
     }
-
     #[test]
     fn starts_ready() {
         assert_eq!(
@@ -193,5 +195,27 @@ mod tests {
         ]);
         assert_eq!(state.phase, Phase::Generating);
         assert_eq!(state.error, None);
+    }
+
+    /// 序列化格式是宿主与前端（TS 类型）之间的约定，用测试锁定。
+    #[cfg(feature = "serde")]
+    mod serde_format {
+        use super::*;
+
+        #[test]
+        fn ready_state_serializes_to_expected_json() {
+            let json = serde_json::to_string(&RoundState::new()).unwrap();
+            assert_eq!(json, r#"{"phase":"ready","word":null,"error":null}"#);
+        }
+
+        #[test]
+        fn preparing_state_serializes_to_expected_json() {
+            let state = apply_all([
+                RoundEvent::RequestWord,
+                RoundEvent::WordReceived("SSA".into()),
+            ]);
+            let json = serde_json::to_string(&state).unwrap();
+            assert_eq!(json, r#"{"phase":"preparing","word":"SSA","error":null}"#);
+        }
     }
 }

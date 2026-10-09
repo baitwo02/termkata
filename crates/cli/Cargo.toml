@@ -11,4 +11,5 @@ path = "src/main.rs"
 
 [dependencies]
 termkata-core = { path = "../core" }
+termkata-host = { path = "../host" }
 termkata-wordgen = { path = "../wordgen" }

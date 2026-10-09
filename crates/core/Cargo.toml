@@ -4,3 +4,13 @@ version = "0.1.0"
 edition = "2021"
 description = "termkata 核心：状态机与纯逻辑（无 UI / 平台依赖）"
 license = "GPL-3.0-only"
+
+[dependencies]
+serde = { version = "1", features = ["derive"], optional = true }
+
+[dev-dependencies]
+serde_json = "1"
+
+[features]
+# 启用序列化支持（宿主 IPC 用）；默认构建保持零依赖
+serde = ["dep:serde"]

@@ -1,0 +1,10 @@
+[package]
+name = "termkata-host"
+version = "0.1.0"
+edition = "2021"
+description = "termkata 宿主编排：状态机与词汇生成器的连接层（无 UI 依赖）"
+license = "GPL-3.0-only"
+
+[dependencies]
+termkata-core = { path = "../core" }
+termkata-wordgen = { path = "../wordgen" }

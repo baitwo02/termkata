@@ -3,17 +3,16 @@
 //! 层级：`command`（输入解析）→ `app`（编排）→ `render`（文本）；
 //! `main` 只做 wiring 与 I/O，功能逻辑全部在 core / wordgen。
 
-mod app;
 mod command;
-mod exec;
 mod render;
 
 use std::io::{self, BufRead, Write};
 
+use termkata_host::app::{App, Outcome};
+use termkata_host::exec;
 use termkata_wordgen::fake::FakeApi;
 use termkata_wordgen::WordSource;
 
-use crate::app::{App, Outcome};
 use crate::command::{Command, Input};
 
 fn main() {

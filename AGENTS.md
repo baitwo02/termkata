@@ -67,7 +67,7 @@
 
 **v0.1 细分迭代：**
 
-- `v0.1.0`：一轮练习状态机 core（Rust，纯逻辑 + 单测）→ CLI 宿主打通管道（FakeApi）→ UI 接入 LLM API 生成与状态渲染。
+- `v0.1.0`：一轮练习状态机 core（Rust，纯逻辑 + 单测）→ CLI 宿主打通管道（FakeApi）→ UI 接入（Tauri IPC + 状态渲染，当前 FakeApi）。
 - `v0.1.1`：用户兴趣领域管理（增删）与持久化。
 - `v0.1.2`：抽题历史。
 
@@ -120,6 +120,7 @@
 | UI（Svelte 等） | 状态的**渲染镜像** | 经宿主接口读取状态并渲染；把用户操作转成事件发回宿主 |
 
 - 所有功能逻辑运行在宿主应用内；UI 与宿主的全部交互只有两种：**读状态、发事件**（Tauri 下即 IPC 的 invoke / listen）。
+- 状态机与生成器的连接逻辑在 `crates/host`（`App`）：`begin_draw` / `finish_draw` / `start_speaking` / `end_speaking`，CLI 与 Tauri 共用。
 - core 不保存状态：权威状态在宿主，UI 持有的只是渲染镜像。
 - UI 侧把状态放进框架的响应式容器后，渲染更新由框架自动完成（批量、按依赖精准更新）。
 - CLI 宿主的“渲染”就是打印；每次操作后输出当前状态即可。
@@ -131,17 +132,19 @@ termkata/
 ├── AGENTS.md
 ├── README.md
 ├── LICENSE
-├── Cargo.toml              # Cargo workspace（members: crates/core）
+├── package.json
+├── Cargo.toml              # Cargo workspace（members: crates/*、src-tauri）
 ├── crates/
-│   ├── core/               # Rust 核心：状态机与纯逻辑（无 UI / 平台依赖，零外部依赖）
+│   ├── core/               # Rust 核心：状态机与纯逻辑（零外部依赖；serde 可选）
 │   ├── wordgen/            # 词汇生成适配器：WordSource 端口 + FakeApi（真实 API 后续）
-│   └── cli/                # CLI 宿主：分层（command / app / render / exec），终端驱动一轮练习
+│   ├── host/               # 宿主编排：状态机 + 生成器的连接层（App / Outcome / 执行器）
+│   └── cli/                # CLI 宿主：分层（command / render），终端驱动一轮练习
+├── src/                    # Svelte UI（渲染镜像 + 平台适配层）
+├── src-tauri/              # Tauri 壳（宿主：权威状态、IPC 命令）
 └── docs/
     ├── adr/                # 架构决策记录
     └── backlog.md          # 各迭代暂不处理的想法/问题
 ```
-
-**UI 迭代时引入**：`src/`（Svelte UI，渲染镜像层）、`src-tauri/`（Tauri 壳：宿主，持有状态、I/O、IPC）；届时 Cargo workspace 增加 `src-tauri` 成员。
 
 **跨平台规则：**
 
@@ -189,7 +192,7 @@ termkata/
 
 ### 测试策略
 
-- 单测覆盖（`cargo test --workspace`）：一轮练习状态机（转移表 / 非法事件 / 状态不可变）、词汇生成端口（FakeApi）、CLI 分层单元测试（解析 / 编排 / 渲染）与端到端集成测试、计时状态机、评分计算；真实 API 接入时用假实现注入。
+- 单测覆盖（`cargo test --workspace`）：一轮练习状态机（转移表 / 非法事件 / 状态不可变 / serde 格式）、词汇生成端口（FakeApi）、宿主编排（App）、CLI 分层单元测试（解析 / 渲染）与端到端集成测试、计时状态机、评分计算；真实 API 接入时用假实现注入。
 - 不写 UI 端到端自动化（成本 > 收益）；UI 用固定验收清单。
 - 接入真实 API 前，必须先用单测锁定响应解析与失败路径。
 
@@ -256,7 +259,8 @@ jj git push --bookmark main    # 推送
 
 ## 11. 当前状态
 
-- 三个 crate 已落地：`core`（状态机）、`wordgen`（词汇生成端口 + FakeApi）、`cli`（终端宿主）；管道端到端可跑。
-- 核心状态机（ADR 0004）已验收：4 阶段 / 5 事件 / `transition` 纯函数。
-- 词汇来源已改为 LLM API 生成 + 用户兴趣领域（ADR 0003），固定词库方案废弃；真实 API 未接入（当前 FakeApi）。
-- 下一步：UI 迭代（恢复 Tauri/Svelte 壳 + IPC 桥 + 状态渲染；serde 待定）。
+- 桌面壳已接入：Tauri 命令 + Svelte 单页按阶段渲染，抽取/口播流程可在界面点通（当前使用 FakeApi）。
+- 主要 crate：`core`（状态机）、`wordgen`（词汇生成端口 + FakeApi）、`host`（宿主编排）、`cli`（终端宿主）、`src-tauri`（桌面宿主）。
+- 核心状态机（ADR 0004）已验收：4 阶段 / 5 事件 / `transition` 纯函数；序列化经可选 `serde` feature。
+- 词汇来源：LLM API（ADR 0003）未接入，当前 FakeApi。
+- 下一步：UI 验收 → 真实 LLM API 接入（模型 / 提示词 / API key 存储）。
