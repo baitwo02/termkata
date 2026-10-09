@@ -28,14 +28,12 @@ impl SharedApp {
 /// 读取当前状态。
 #[tauri::command]
 fn get_state(shared: State<'_, SharedApp>) -> RoundState {
-    eprintln!("[ipc] get_state"); // 临时诊断日志，定位后删除
     shared.app.lock().unwrap().state().clone()
 }
 
 /// 发起抽取：就绪 → 生成中。
 #[tauri::command]
 fn begin_draw(shared: State<'_, SharedApp>) -> RoundState {
-    eprintln!("[ipc] begin_draw"); // 临时诊断日志，定位后删除
     let mut app = shared.app.lock().unwrap();
     let _ = app.begin_draw();
     app.state().clone()
@@ -46,7 +44,6 @@ fn begin_draw(shared: State<'_, SharedApp>) -> RoundState {
 /// FakeApi 立即就绪，用极简执行器驱动；真实异步 API 接入时改为 async 命令 + 正式运行时。
 #[tauri::command]
 fn finish_draw(shared: State<'_, SharedApp>) -> RoundState {
-    eprintln!("[ipc] finish_draw"); // 临时诊断日志，定位后删除
     let mut app = shared.app.lock().unwrap();
     exec::block_on(app.finish_draw());
     app.state().clone()
@@ -55,7 +52,6 @@ fn finish_draw(shared: State<'_, SharedApp>) -> RoundState {
 /// 开始口播：准备 → 口播。
 #[tauri::command]
 fn start_speaking(shared: State<'_, SharedApp>) -> RoundState {
-    eprintln!("[ipc] start_speaking"); // 临时诊断日志，定位后删除
     let mut app = shared.app.lock().unwrap();
     let _ = app.start_speaking();
     app.state().clone()
@@ -64,7 +60,6 @@ fn start_speaking(shared: State<'_, SharedApp>) -> RoundState {
 /// 结束口播：口播 → 就绪。
 #[tauri::command]
 fn end_speaking(shared: State<'_, SharedApp>) -> RoundState {
-    eprintln!("[ipc] end_speaking"); // 临时诊断日志，定位后删除
     let mut app = shared.app.lock().unwrap();
     let _ = app.end_speaking();
     app.state().clone()
