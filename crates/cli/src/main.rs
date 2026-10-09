@@ -80,19 +80,17 @@ fn dispatch(state: RoundState, event: RoundEvent) -> RoundState {
 }
 
 fn print_state(state: &RoundState) {
+    let word = state.word.as_deref().unwrap_or("(无)");
+
     match state.phase {
         Phase::Ready => match &state.error {
             Some(error) => println!("[就绪] 上次抽取失败：{error}"),
             None => println!("[就绪] 等待抽取"),
         },
         Phase::Generating => println!("[生成中] 正在请求词汇…"),
-        Phase::Preparing => println!("[准备] 当前词汇：{}", word(state)),
-        Phase::Speaking => println!("[口播] 当前词汇：{}", word(state)),
+        Phase::Preparing => println!("[准备] 当前词汇：{word}"),
+        Phase::Speaking => println!("[口播] 当前词汇：{word}"),
     }
-}
-
-fn word(state: &RoundState) -> &str {
-    state.word.as_deref().unwrap_or("(无)")
 }
 
 fn phase_label(phase: Phase) -> &'static str {
