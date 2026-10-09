@@ -1,0 +1,14 @@
+[package]
+name = "termkata-cli"
+version = "0.1.0"
+edition = "2021"
+description = "termkata CLI 宿主：在终端驱动一轮练习（当前使用 FakeApi）"
+license = "GPL-3.0-only"
+
+[[bin]]
+name = "termkata"
+path = "src/main.rs"
+
+[dependencies]
+termkata-core = { path = "../core" }
+termkata-wordgen = { path = "../wordgen" }
