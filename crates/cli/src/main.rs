@@ -55,10 +55,22 @@ fn main() {
     println!("再见。");
 }
 
+/// CLI 显示层：把核心值翻译为界面文案（UI 文案不进 core）。
+trait RoundDisplay {
+    /// 当前词汇的显示文本（无词时给出占位符）。
+    fn word_label(&self) -> &str;
+}
+
+impl RoundDisplay for RoundState {
+    fn word_label(&self) -> &str {
+        self.word().unwrap_or("(无)")
+    }
+}
+
 /// 抽取：发 `RequestWord` → 等生成器 → 按结果发 `WordReceived` / `RequestFailed`。
 fn draw(state: RoundState, source: &mut impl WordSource) -> RoundState {
     let state = dispatch(state, RoundEvent::RequestWord);
-    if state.phase != Phase::Generating {
+    if state.phase() != Phase::Generating {
         return state; // 当前阶段不允许抽取
     }
 
@@ -71,25 +83,23 @@ fn draw(state: RoundState, source: &mut impl WordSource) -> RoundState {
 
 /// 把事件派发给状态机；无效事件被忽略并提示（返回原状态）。
 fn dispatch(state: RoundState, event: RoundEvent) -> RoundState {
-    let before = state.phase;
+    let before = state.phase();
     let next = transition(state, event);
-    if next.phase == before {
+    if next.phase() == before {
         println!("当前阶段不能执行该操作（{}）", phase_label(before));
     }
     next
 }
 
 fn print_state(state: &RoundState) {
-    let word = state.word.as_deref().unwrap_or("(无)");
-
-    match state.phase {
-        Phase::Ready => match &state.error {
+    match state.phase() {
+        Phase::Ready => match state.error() {
             Some(error) => println!("[就绪] 上次抽取失败：{error}"),
             None => println!("[就绪] 等待抽取"),
         },
         Phase::Generating => println!("[生成中] 正在请求词汇…"),
-        Phase::Preparing => println!("[准备] 当前词汇：{word}"),
-        Phase::Speaking => println!("[口播] 当前词汇：{word}"),
+        Phase::Preparing => println!("[准备] 当前词汇：{}", state.word_label()),
+        Phase::Speaking => println!("[口播] 当前词汇：{}", state.word_label()),
     }
 }
 

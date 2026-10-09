@@ -34,17 +34,35 @@ pub enum Phase {
 }
 
 /// 一轮练习的状态快照（不可变值类型）。
+///
+/// 字段私有：外部只能通过 `transition` 产生新状态、通过访问器读取，
+/// 无法自行拼装出非法状态（如 `Preparing` 却没有词）。
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct RoundState {
-    pub phase: Phase,
-    pub word: Option<String>,
-    pub error: Option<String>,
+    phase: Phase,
+    word: Option<String>,
+    error: Option<String>,
 }
 
 impl RoundState {
     /// 构造初始状态：就绪、无词、无错误。
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// 当前阶段。
+    pub fn phase(&self) -> Phase {
+        self.phase
+    }
+
+    /// 当前词汇（若有）。
+    pub fn word(&self) -> Option<&str> {
+        self.word.as_deref()
+    }
+
+    /// 最近一次抽取失败信息（仅在 `Ready` 阶段有意义）。
+    pub fn error(&self) -> Option<&str> {
+        self.error.as_deref()
     }
 }
 
