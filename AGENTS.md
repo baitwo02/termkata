@@ -135,7 +135,7 @@ termkata/
 ├── crates/
 │   ├── core/               # Rust 核心：状态机与纯逻辑（无 UI / 平台依赖，零外部依赖）
 │   ├── wordgen/            # 词汇生成适配器：WordSource 端口 + FakeApi（真实 API 后续）
-│   └── cli/                # CLI 宿主：在终端驱动一轮练习（验证“可无 UI 运行”）
+│   └── cli/                # CLI 宿主：分层（command / app / render / exec），终端驱动一轮练习
 └── docs/
     ├── adr/                # 架构决策记录
     └── backlog.md          # 各迭代暂不处理的想法/问题
@@ -189,7 +189,7 @@ termkata/
 
 ### 测试策略
 
-- 单测覆盖（`cargo test --workspace`）：一轮练习状态机（转移表 / 非法事件 / 状态不可变）、词汇生成端口（FakeApi）、CLI 管道端到端集成测试、计时状态机、评分计算；真实 API 接入时用假实现注入。
+- 单测覆盖（`cargo test --workspace`）：一轮练习状态机（转移表 / 非法事件 / 状态不可变）、词汇生成端口（FakeApi）、CLI 分层单元测试（解析 / 编排 / 渲染）与端到端集成测试、计时状态机、评分计算；真实 API 接入时用假实现注入。
 - 不写 UI 端到端自动化（成本 > 收益）；UI 用固定验收清单。
 - 接入真实 API 前，必须先用单测锁定响应解析与失败路径。
 
