@@ -27,7 +27,7 @@ pub fn rejected_text(phase: Phase) -> String {
 
 /// 帮助文本。
 pub fn help_text() -> &'static str {
-    "命令：\n  draw   抽取一个词汇（FakeApi 轮换生成）\n  speak  准备结束，开始口播\n  end    结束口播，回到就绪\n  help   显示本帮助\n  q      退出"
+    "命令：\n  draw   抽取一个词汇\n  speak  准备结束，开始口播\n  end    结束口播，回到就绪\n  help   显示本帮助\n  q      退出"
 }
 
 /// 显示层扩展：核心值 → 界面文案。

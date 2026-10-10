@@ -4,6 +4,7 @@
 //! 自行决定如何渲染与交互。
 
 pub mod app;
+pub mod env;
 pub mod exec;
 
 pub use app::{App, TransitionStatus};

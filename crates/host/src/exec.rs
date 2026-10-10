@@ -1,6 +1,6 @@
-//! 极简执行器：驱动"立即就绪"的 future（当前只有 FakeApi）。
+//! 极简执行器：驱动"立即就绪"的 future（假实现 / 单测用）。
 //!
-//! 接入真实异步 API 时，替换为正式运行时（如 tokio / pollster）。
+//! 真实异步 I/O 由宿主的正式运行时驱动（CLI 用 tokio；Tauri 用 tauri::async_runtime）。
 
 use std::future::Future;
 use std::pin::pin;

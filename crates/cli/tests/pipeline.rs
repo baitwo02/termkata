@@ -4,6 +4,7 @@ use std::process::{Command, Stdio};
 /// 启动 CLI，喂入命令，收集输出。
 fn run_cli(input: &str) -> (String, bool) {
     let mut child = Command::new(env!("CARGO_BIN_EXE_termkata"))
+        .arg("--fake") // 集成测试不触网、不依赖密钥
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -29,6 +30,10 @@ fn full_round_pipeline() {
     let (stdout, success) = run_cli("draw\nspeak\nend\ndraw\nquit\n");
 
     assert!(success, "CLI 应正常退出：{stdout}");
+    assert!(
+        stdout.contains("假实现"),
+        "应标明词汇来源为假实现：{stdout}"
+    );
     assert!(stdout.contains("生成中"), "应显示生成中状态：{stdout}");
     assert!(
         stdout.contains("SSA（静态单赋值）"),

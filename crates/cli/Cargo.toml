@@ -2,7 +2,7 @@
 name = "termkata-cli"
 version = "0.1.0"
 edition = "2021"
-description = "termkata CLI 宿主：在终端驱动一轮练习（当前使用 FakeApi）"
+description = "termkata CLI 宿主：在终端驱动一轮练习（DeepSeek API；--fake 为开发用假实现）"
 license = "GPL-3.0-only"
 
 [[bin]]
@@ -13,3 +13,4 @@ path = "src/main.rs"
 termkata-core = { path = "../core" }
 termkata-host = { path = "../host" }
 termkata-wordgen = { path = "../wordgen" }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

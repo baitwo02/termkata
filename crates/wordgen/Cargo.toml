@@ -2,5 +2,9 @@
 name = "termkata-wordgen"
 version = "0.1.0"
 edition = "2021"
-description = "termkata 词汇生成：WordSource 端口与假实现（真实 LLM API 后续接入）"
+description = "termkata 词汇生成：WordSource 端口、provider 分层与实现（DeepSeek / 假实现）"
 license = "GPL-3.0-only"
+
+[dependencies]
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+serde_json = "1"
