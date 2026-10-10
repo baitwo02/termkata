@@ -13,6 +13,7 @@ use std::io::{self, BufRead, Write};
 
 use termkata_host::app::{App, TransitionStatus};
 use termkata_wordgen::any::AnySource;
+use termkata_wordgen::providers::DEEPSEEK;
 use termkata_wordgen::WordSource;
 
 use crate::command::{Command, Input};
@@ -27,7 +28,13 @@ async fn main() {
     }
 
     match AnySource::deepseek_from_env() {
-        Ok(source) => run(source, "DeepSeek API（deepseek-chat）").await,
+        Ok(source) => {
+            run(
+                source,
+                &format!("DeepSeek API（{}）", DEEPSEEK.default_model),
+            )
+            .await
+        }
         Err(message) => {
             eprintln!("{message}");
             eprintln!("开发调试可用：cargo run -p termkata-cli -- --fake");

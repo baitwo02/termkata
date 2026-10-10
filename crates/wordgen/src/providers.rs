@@ -19,12 +19,15 @@ pub struct ProviderSpec {
 }
 
 /// DeepSeek（协议：OpenAI 兼容的 chat completions）。
+///
+/// 模型名经官方 `/models` 确认（2026-10）：`deepseek-flash`（默认）与 `deepseek-v4-pro`；
+/// 旧的 `deepseek-chat` 已不在列表中。
 pub const DEEPSEEK: ProviderSpec = ProviderSpec {
     id: "deepseek",
     display_name: "DeepSeek",
     base_url: "https://api.deepseek.com",
     api_key_env: "DEEPSEEK_API_KEY",
-    default_model: "deepseek-chat",
+    default_model: "deepseek-flash",
 };
 
 #[cfg(test)]
@@ -35,6 +38,6 @@ mod tests {
     #[test]
     fn deepseek_contract() {
         assert_eq!(DEEPSEEK.api_key_env, "DEEPSEEK_API_KEY");
-        assert_eq!(DEEPSEEK.default_model, "deepseek-chat");
+        assert_eq!(DEEPSEEK.default_model, "deepseek-flash");
     }
 }

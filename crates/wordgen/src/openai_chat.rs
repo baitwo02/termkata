@@ -50,13 +50,13 @@ impl OpenAiChat {
             .json(&body)
             .send()
             .await
-            .map_err(|error| format!("请求 {} 失败：{error}", self.base_url))?;
+            .map_err(|error| format!("请求 {} 失败：{}", self.base_url, error_chain(&error)))?;
 
         let status = response.status();
         let text = response
             .text()
             .await
-            .map_err(|error| format!("读取响应失败：{error}"))?;
+            .map_err(|error| format!("读取响应失败：{}", error_chain(&error)))?;
 
         if !status.is_success() {
             return Err(format!(
@@ -80,6 +80,20 @@ impl OpenAiChat {
     }
 }
 
+/// 展开错误原因链：reqwest 顶层消息常常只有 "error sending request"，真正原因在 source 里。
+fn error_chain(error: &dyn std::error::Error) -> String {
+    let mut parts = vec![error.to_string()];
+    let mut source = error.source();
+    while let Some(cause) = source {
+        let text = cause.to_string();
+        if parts.last().map(String::as_str) != Some(text.as_str()) {
+            parts.push(text);
+        }
+        source = cause.source();
+    }
+    parts.join("：")
+}
+
 /// 截断过长文本（错误信息里避免刷屏）。
 fn truncate(text: &str, max_chars: usize) -> String {
     if text.chars().count() <= max_chars {
@@ -93,6 +107,33 @@ fn truncate(text: &str, max_chars: usize) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn expands_error_source_chain() {
+        #[derive(Debug)]
+        struct Inner;
+        impl std::fmt::Display for Inner {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f, "内层原因")
+            }
+        }
+        impl std::error::Error for Inner {}
+
+        #[derive(Debug)]
+        struct Outer(Inner);
+        impl std::fmt::Display for Outer {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f, "顶层消息")
+            }
+        }
+        impl std::error::Error for Outer {
+            fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+                Some(&self.0)
+            }
+        }
+
+        assert_eq!(error_chain(&Outer(Inner)), "顶层消息：内层原因");
+    }
 
     #[test]
     fn truncates_only_when_needed() {
