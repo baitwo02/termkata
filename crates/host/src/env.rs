@@ -56,14 +56,9 @@ fn parse_dotenv(content: &str) -> Vec<(String, String)> {
                 return None;
             }
             let value = value.trim();
-            let value = value
-                .strip_prefix('"')
-                .and_then(|inner| inner.strip_suffix('"'))
-                .or_else(|| {
-                    value
-                        .strip_prefix('\'')
-                        .and_then(|inner| inner.strip_suffix('\''))
-                })
+            let value = ['"', '\'']
+                .into_iter()
+                .find_map(|quote| value.strip_prefix(quote)?.strip_suffix(quote))
                 .unwrap_or(value);
             Some((key.to_string(), value.to_string()))
         })
@@ -108,6 +103,22 @@ KEY_C=原样=保留等号";
                 ("KEY_A".to_string(), "值 A".to_string()),
                 ("KEY_B".to_string(), "值 B".to_string()),
                 ("KEY_C".to_string(), "原样=保留等号".to_string()),
+            ]
+        );
+    }
+
+    #[test]
+    fn keeps_unpaired_or_nested_quotes() {
+        // 只有首尾同种引号才剥一层；异种/不成对的引号原样保留。
+        let content = "\
+A=\"未闭合\nB='未闭合\nC=\"异种'\nD=\"'嵌套'\"";
+        assert_eq!(
+            parse_dotenv(content),
+            vec![
+                ("A".to_string(), "\"未闭合".to_string()),
+                ("B".to_string(), "'未闭合".to_string()),
+                ("C".to_string(), "\"异种'".to_string()),
+                ("D".to_string(), "'嵌套'".to_string()),
             ]
         );
     }
