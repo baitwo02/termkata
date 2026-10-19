@@ -9,7 +9,7 @@
 
 ## 开发环境
 
-由仓库内的 Nix flake 管理（Rust / Node / pnpm / jj / WebKitGTK）：
+由仓库内的 Nix flake 管理（Rust / rust-analyzer / Node / pnpm / jj / WebKitGTK）：
 
 ```bash
 nix develop

@@ -52,7 +52,9 @@
               nodejs_24
               pnpm
               jujutsu
-              rust-bin.stable.latest.default
+              (rust-bin.stable.latest.default.override {
+                extensions = [ "rust-analyzer" ];
+              })
             ];
 
             nativeBuildInputs = with pkgs; [
