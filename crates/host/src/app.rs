@@ -92,7 +92,10 @@ mod tests {
     #[test]
     fn speaking_before_preparing_is_rejected() {
         let mut app = app();
-        assert_eq!(app.start_speaking(), TransitionStatus::Rejected(Phase::Ready));
+        assert_eq!(
+            app.start_speaking(),
+            TransitionStatus::Rejected(Phase::Ready)
+        );
     }
 
     #[test]

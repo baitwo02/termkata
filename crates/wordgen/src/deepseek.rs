@@ -65,7 +65,10 @@ mod tests {
 
     #[test]
     fn parses_plain_word() {
-        assert_eq!(parse_word("SSA（静态单赋值）").unwrap(), "SSA（静态单赋值）");
+        assert_eq!(
+            parse_word("SSA（静态单赋值）").unwrap(),
+            "SSA（静态单赋值）"
+        );
     }
 
     #[test]

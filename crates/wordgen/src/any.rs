@@ -84,7 +84,10 @@ mod tests {
     #[test]
     fn fake_variant_delegates_to_fake_api() {
         let mut source = AnySource::fake();
-        assert_eq!(block_on(source.request_word()).unwrap(), "SSA（静态单赋值）");
+        assert_eq!(
+            block_on(source.request_word()).unwrap(),
+            "SSA（静态单赋值）"
+        );
     }
 
     #[test]
@@ -99,7 +102,10 @@ mod tests {
     #[test]
     fn missing_key_reports_env_var_name() {
         let error = AnySource::deepseek_from_key(None).unwrap_err();
-        assert!(error.contains("DEEPSEEK_API_KEY"), "错误应包含环境变量名：{error}");
+        assert!(
+            error.contains("DEEPSEEK_API_KEY"),
+            "错误应包含环境变量名：{error}"
+        );
         let error = AnySource::deepseek_from_key(Some("   ".to_string())).unwrap_err();
         assert!(error.contains("DEEPSEEK_API_KEY"));
     }
